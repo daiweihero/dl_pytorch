@@ -48,7 +48,7 @@ class Net(nn.Module):
         return out
 
 
-model = Net(28 * 28, 500, 10)
+model = Net(28 * 28, 512, 10)
 
 # ch2.1 代码清单 2-3 编译步骤 ------------------------------------------------- #
 criterion = nn.CrossEntropyLoss()
@@ -90,4 +90,3 @@ with torch.no_grad():  # 不需要反向传播，禁用自动梯度功能
 # pytorch的代码比keras多了很多
 # tytorch的模型在我的电脑上运行多次，每次的精确率大约在92.72%左右，比起书中97.85%差了很多
 # 可能的原因：1、权重初始化的方式；2、RMSprop的默认参数选择；
-
