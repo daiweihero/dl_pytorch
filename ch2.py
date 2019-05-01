@@ -38,20 +38,20 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.relu = nn.ReLU()
         self.fc2 = nn.Linear(hidden_size, output_size)
-        self.softmax = nn.Softmax(dim=1)
+        # self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
         out = self.fc1(x)
         out = self.relu(out)
         out = self.fc2(out)
-        out = self.softmax(out)
+        # out = self.softmax(out)  # 坑：交叉熵函数内部会softmax
         return out
 
 
 model = Net(28 * 28, 512, 10)
 
 # ch2.1 代码清单 2-3 编译步骤 ------------------------------------------------- #
-criterion = nn.CrossEntropyLoss()
+criterion = nn.CrossEntropyLoss()  # 内部会softmax
 optimizer = torch.optim.RMSprop(model.parameters(), lr=0.01, alpha=0.99)
 
 # ch2.1 代码清单 2-4 准备图像数据 --------------------------------------------- #
@@ -88,5 +88,5 @@ with torch.no_grad():  # 不需要反向传播，禁用自动梯度功能
 
 # 总结 ------------------------------------------------------------------------ #
 # pytorch的代码比keras多了很多
-# tytorch的模型在我的电脑上运行多次，每次的精确率大约在92.72%左右，比起书中97.85%差了很多
+# tytorch的模型在我的电脑上运行多次，每次的精确率大约在96%左右，比起书中97.85%差了很多
 # 可能的原因：1、权重初始化的方式；2、RMSprop的默认参数选择；
