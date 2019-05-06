@@ -52,22 +52,15 @@ model = Net(28 * 28, 512, 10)
 
 # ch2.1 代码清单 2-3 编译步骤 ------------------------------------------------- #
 criterion = nn.CrossEntropyLoss()  # 内部会softmax
-optimizer = torch.optim.RMSprop(model.parameters(), lr=0.01, alpha=0.99)
-
-# ch2.1 代码清单 2-4 准备图像数据 --------------------------------------------- #
-# 只是等价于keras的写法，实际并不运行以下四行代码
-# train_imagess = train.data.reshape((60000, 28 * 28))
-# train_imagess = train_imagess.float() / 255
-# test_imagess = test.data.reshape((10000, 28 * 28))
-# test_imagess = test_imagess.float() / 255
+optimizer = torch.optim.RMSprop(model.parameters())
 
 # ch2.1 代码清单 2-5 准备标签 ------------------------------------------------- #
 # CrossEntropyLoss()会自动转化one-hot编码
 # 训练网络
 for epoch in range(5):  # epochs=5
     for images, labels in train_loader:
-        # 准备图像数据放在这一行
-        images = images.reshape((-1, 28*28)).float() / 255
+        # 准备图像数据放在这一行, 因为torch的MNIST加载进来已经【0，1】化了，不需要/255
+        images = images.reshape((-1, 28*28)).float()
         outputs = model.forward(images)
         loss = criterion(outputs, labels)
         optimizer.zero_grad()
@@ -80,7 +73,7 @@ with torch.no_grad():  # 不需要反向传播，禁用自动梯度功能
     correct = 0  # 预测正确的数量
     total = len(test.targets)
     for images, labels in test_loader:
-        images = images.reshape((-1, 28*28)).float() / 255
+        images = images.reshape((-1, 28*28)).float()
         outputs = model.forward(images)
         _, predicted = torch.max(outputs, 1)
         correct += (predicted == labels).sum().item()
@@ -88,5 +81,5 @@ with torch.no_grad():  # 不需要反向传播，禁用自动梯度功能
 
 # 总结 ------------------------------------------------------------------------ #
 # pytorch的代码比keras多了很多
-# tytorch的模型在我的电脑上运行多次，每次的精确率大约在96%左右，比起书中97.85%差了很多
+# tytorch的模型在我的电脑上运行多次，每次的精确率大约在96.5%左右，比起书中97.85%差了很多
 # 可能的原因：1、权重初始化的方式；2、RMSprop的默认参数选择；
